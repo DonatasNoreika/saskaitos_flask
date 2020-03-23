@@ -1,9 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DateTime
-from datetime import datetime
-# import forms
+import forms
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 print(basedir)
@@ -40,3 +38,51 @@ class Saskaita(db.Model):
     bankas_id = db.Column(db.Integer, db.ForeignKey("bankas.id"))
     bankas = db.relationship("Zmogus")
     balansas = db.Column("Balansas", db.Float)
+
+@app.route("/")
+def accounts():
+    return render_template("saskaitos.html")
+
+@app.route("/zmones")
+def people():
+    try:
+        visi_zmones = Zmogus.query.all()
+    except:
+        visi_zmones = []
+    return render_template("zmones.html", visi_zmones=visi_zmones)
+
+
+@app.route("/naujas_tevas", methods=["GET", "POST"])
+def zmogus_new():
+    db.create_all()
+    forma = forms.ZmogusForm()
+    if forma.validate_on_submit():
+        naujas_zmogus = Zmogus(vardas=forma.vardas.data, pavarde=forma.pavarde.data, asmens_kodas=forma.asmens_kodas.data, tel_numeris=forma.ten_numeris.data)
+        db.session.add(naujas_zmogus)
+        db.session.commit()
+        return redirect(url_for('people'))
+    return render_template("prideti_zmogu.html", form=forma)
+
+@app.route("/zmogus_delete/<int:id>")
+def zmogus_delete(id):
+    uzklausa = Zmogus.query.get(id)
+    db.session.delete(uzklausa)
+    db.session.commit()
+    return redirect(url_for('people'))
+
+@app.route("/zmogus_update/<int:id>", methods=['GET', 'POST'])
+def zmogus_update(id):
+    form = forms.ZmogusForm()
+    zmogus = Zmogus.query.get(id)
+    if form.validate_on_submit():
+        zmogus.vardas = form.vardas.data
+        zmogus.pavarde = form.pavarde.data
+        zmogus.asmens_kodas = form.asmens_kodas.data
+        zmogus.ten_numeris = form.ten_numeris.data
+        db.session.commit()
+        return redirect(url_for('people'))
+    return render_template("zmogus_update.html", form=form, zmogus=zmogus)
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8000, debug=True)
+    db.create_all()

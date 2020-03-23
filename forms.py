@@ -11,13 +11,14 @@ class ZmogusForm(FlaskForm):
     pavarde = StringField('Pavardė', [DataRequired()])
     asmens_kodas = StringField('Asmens kodas', [DataRequired()])
     ten_numeris = StringField('Telefono numeris', [DataRequired()])
+    submit = SubmitField('Įvesti žmogų')
 
 class BankasForm(FlaskForm):
     pavadinimas = StringField('Pavadinimas', [DataRequired()])
     adresas = StringField('Adresas', [DataRequired()])
     banko_kodas = StringField('Banko kodas', [DataRequired()])
     swift = StringField('SWIFT kodas', [DataRequired()])
-    submit = SubmitField('Įvesti')
+    submit = SubmitField('Įvesti banką')
 
 def zmogus_query():
     return app.Zmogus.query
@@ -30,6 +31,8 @@ class SaskaitaForm(FlaskForm):
     zmogus = QuerySelectField("Vartotojas", query_factory=zmogus_query, allow_blank=True, get_label="vardas", get_pk=lambda obj: str(obj))
     bankas = QuerySelectField("Bankas", query_factory=bankas_query, allow_blank=True, get_label="pavadinimas", get_pk=lambda obj: str(obj))
     balansas = FloatField('Adresas', [DataRequired()])
+    submit = SubmitField('Įvesti sąskaitą')
+
 
 
 
