@@ -36,7 +36,7 @@ class Saskaita(db.Model):
     zmogus_id = db.Column(db.Integer, db.ForeignKey("zmogus.id"))
     zmogus = db.relationship("Zmogus")
     bankas_id = db.Column(db.Integer, db.ForeignKey("bankas.id"))
-    bankas = db.relationship("Zmogus")
+    bankas = db.relationship("Bankas")
     balansas = db.Column("Balansas", db.Float)
 
 @app.route("/")
