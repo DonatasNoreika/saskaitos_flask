@@ -10,15 +10,15 @@
     </div>
     <div class="form-group">
         {{ form.pavarde.label(class="form-control-label") }}
-        {{ form.pavarde(class="form-control"), value=zmogus.pavarde }}
+        {{ form.pavarde(class="form-control", value=zmogus.pavarde) }}
     </div>
     <div class="form-group">
         {{ form.asmens_kodas.label(class="form-control-label") }}
         {{ form.asmens_kodas(class="form-control", value=zmogus.asmens_kodas) }}
     </div>
     <div class="form-group">
-        {{ form.ten_numeris.label(class="form-control-label") }}
-        {{ form.ten_numeris(class="form-control", value=zmogus.ten_numeris) }}
+        {{ form.tel_numeris.label(class="form-control-label") }}
+        {{ form.tel_numeris(class="form-control", value=zmogus.tel_numeris) }}
     </div>
     {{ form.submit }}
 </form>

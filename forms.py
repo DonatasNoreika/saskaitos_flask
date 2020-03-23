@@ -10,7 +10,7 @@ class ZmogusForm(FlaskForm):
     vardas = StringField('Vardas', [DataRequired()])
     pavarde = StringField('Pavardė', [DataRequired()])
     asmens_kodas = StringField('Asmens kodas', [DataRequired()])
-    ten_numeris = StringField('Telefono numeris', [DataRequired()])
+    tel_numeris = StringField('Telefono numeris', [DataRequired()])
     submit = SubmitField('Įvesti žmogų')
 
 class BankasForm(FlaskForm):
@@ -30,7 +30,7 @@ class SaskaitaForm(FlaskForm):
     numeris = StringField('Pavadinimas', [DataRequired()])
     zmogus = QuerySelectField("Vartotojas", query_factory=zmogus_query, allow_blank=True, get_label="vardas", get_pk=lambda obj: str(obj))
     bankas = QuerySelectField("Bankas", query_factory=bankas_query, allow_blank=True, get_label="pavadinimas", get_pk=lambda obj: str(obj))
-    balansas = FloatField('Adresas', [DataRequired()])
+    balansas = FloatField('Balansas', [DataRequired()])
     submit = SubmitField('Įvesti sąskaitą')
 
 

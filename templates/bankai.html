@@ -10,7 +10,7 @@
 <p>Banko kodas: {{bankas.banko_kodas}}</p>
 <p>SWIFT kodas: {{bankas.swift}}</p>
 <a href="{{ url_for('bankas_delete', id=bankas['id']) }}">Ištrinti</a>
-<a href="{{ url_for('bankas_delete', id=bankas['id']) }}">Redaguoti</a>
+<a href="{{ url_for('bankas_update', id=bankas['id']) }}">Redaguoti</a>
 {% endfor %}
 {% endif %}
 <hr>

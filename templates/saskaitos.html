@@ -2,6 +2,18 @@
 
 {% block content %}
 
-<h1>Kuriama</h1>
+{% if visos_saskaitos %}
+{% for saskaita in visos_saskaitos %}
+<hr>
+<p>Numeris: {{saskaita.numeris}}</p>
+<p>Savininkas: {{saskaita.zmogus.vardas}} {{saskaita.zmogus.pavarde}}</p>
+<p>Bankas: {{saskaita.bankas.pavadinimas}}</p>
+<p>balansas: {{saskaita.balansas}}</p>
+<a href="{{ url_for('saskaita_delete', id=saskaita['id']) }}">Ištrinti</a>
+<a href="{{ url_for('saskaita_update', id=saskaita['id']) }}">Redaguoti</a>
+{% endfor %}
+{% endif %}
+<hr>
+<p><a href="{{ url_for('saskaita_new')}}">Nauja sąskaita</a></p>
 
 {% endblock %}

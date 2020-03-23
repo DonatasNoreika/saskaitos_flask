@@ -41,7 +41,11 @@ class Saskaita(db.Model):
 
 @app.route("/")
 def accounts():
-    return render_template("saskaitos.html")
+    try:
+        visos_saskaitos = Saskaita.query.all()
+    except:
+        visos_saskaitos = []
+    return render_template("saskaitos.html", visos_saskaitos=visos_saskaitos)
 
 @app.route("/bankai")
 def banks():
@@ -65,7 +69,7 @@ def zmogus_new():
     db.create_all()
     forma = forms.ZmogusForm()
     if forma.validate_on_submit():
-        naujas_zmogus = Zmogus(vardas=forma.vardas.data, pavarde=forma.pavarde.data, asmens_kodas=forma.asmens_kodas.data, tel_numeris=forma.ten_numeris.data)
+        naujas_zmogus = Zmogus(vardas=forma.vardas.data, pavarde=forma.pavarde.data, asmens_kodas=forma.asmens_kodas.data, tel_numeris=forma.tel_numeris.data)
         db.session.add(naujas_zmogus)
         db.session.commit()
         return redirect(url_for('people'))
@@ -82,6 +86,17 @@ def bankas_new():
         return redirect(url_for('banks'))
     return render_template("prideti_banka.html", form=forma)
 
+@app.route("/nauja_saskaita", methods=["GET", "POST"])
+def saskaita_new():
+    db.create_all()
+    forma = forms.SaskaitaForm()
+    if forma.validate_on_submit():
+        nauja_saskaita = Saskaita(numeris=forma.numeris.data, zmogus_id=forma.zmogus.data.id, bankas_id=forma.bankas.data.id, balansas=forma.balansas.data)
+        db.session.add(nauja_saskaita)
+        db.session.commit()
+        return redirect(url_for('accounts'))
+    return render_template("prideti_saskaita.html", form=forma)
+
 @app.route("/zmogus_delete/<int:id>")
 def zmogus_delete(id):
     uzklausa = Zmogus.query.get(id)
@@ -96,6 +111,13 @@ def bankas_delete(id):
     db.session.commit()
     return redirect(url_for('banks'))
 
+@app.route("/saskaita_delete/<int:id>")
+def saskaita_delete(id):
+    uzklausa = Saskaita.query.get(id)
+    db.session.delete(uzklausa)
+    db.session.commit()
+    return redirect(url_for('accounts'))
+
 @app.route("/zmogus_update/<int:id>", methods=['GET', 'POST'])
 def zmogus_update(id):
     form = forms.ZmogusForm()
@@ -104,7 +126,7 @@ def zmogus_update(id):
         zmogus.vardas = form.vardas.data
         zmogus.pavarde = form.pavarde.data
         zmogus.asmens_kodas = form.asmens_kodas.data
-        zmogus.ten_numeris = form.ten_numeris.data
+        zmogus.tel_numeris = form.tel_numeris.data
         db.session.commit()
         return redirect(url_for('people'))
     return render_template("zmogus_update.html", form=form, zmogus=zmogus)
@@ -122,6 +144,19 @@ def bankas_update(id):
         db.session.commit()
         return redirect(url_for('people'))
     return render_template("bankas_update.html", form=form, bankas=bankas)
+
+@app.route("/saskaita_update/<int:id>", methods=['GET', 'POST'])
+def saskaita_update(id):
+    form = forms.SaskaitaForm()
+    saskaita = Saskaita.query.get(id)
+    if form.validate_on_submit():
+        saskaita.numeris = form.numeris.data
+        saskaita.zmogus_id = form.zmogus.data.id
+        saskaita.bankas_id = form.bankas.data.id
+        saskaita.balansas = form.balansas.data
+        db.session.commit()
+        return redirect(url_for('accounts'))
+    return render_template("saskaita_update.html", form=form, saskaita=saskaita)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
