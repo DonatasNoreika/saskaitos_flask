@@ -43,6 +43,14 @@ class Saskaita(db.Model):
 def accounts():
     return render_template("saskaitos.html")
 
+@app.route("/bankai")
+def banks():
+    try:
+        visi_bankai = Bankas.query.all()
+    except:
+        visi_bankai = []
+    return render_template("bankai.html", visi_bankai=visi_bankai)
+
 @app.route("/zmones")
 def people():
     try:
@@ -52,7 +60,7 @@ def people():
     return render_template("zmones.html", visi_zmones=visi_zmones)
 
 
-@app.route("/naujas_tevas", methods=["GET", "POST"])
+@app.route("/naujas_zmogus", methods=["GET", "POST"])
 def zmogus_new():
     db.create_all()
     forma = forms.ZmogusForm()
@@ -63,12 +71,30 @@ def zmogus_new():
         return redirect(url_for('people'))
     return render_template("prideti_zmogu.html", form=forma)
 
+@app.route("/naujas_bankas", methods=["GET", "POST"])
+def bankas_new():
+    db.create_all()
+    forma = forms.BankasForm()
+    if forma.validate_on_submit():
+        naujas_bankas = Bankas(pavadinimas=forma.pavadinimas.data, adresas=forma.adresas.data, banko_kodas=forma.banko_kodas.data, swift=forma.swift.data)
+        db.session.add(naujas_bankas)
+        db.session.commit()
+        return redirect(url_for('banks'))
+    return render_template("prideti_banka.html", form=forma)
+
 @app.route("/zmogus_delete/<int:id>")
 def zmogus_delete(id):
     uzklausa = Zmogus.query.get(id)
     db.session.delete(uzklausa)
     db.session.commit()
     return redirect(url_for('people'))
+
+@app.route("/bankas_delete/<int:id>")
+def bankas_delete(id):
+    uzklausa = Bankas.query.get(id)
+    db.session.delete(uzklausa)
+    db.session.commit()
+    return redirect(url_for('banks'))
 
 @app.route("/zmogus_update/<int:id>", methods=['GET', 'POST'])
 def zmogus_update(id):
@@ -82,6 +108,20 @@ def zmogus_update(id):
         db.session.commit()
         return redirect(url_for('people'))
     return render_template("zmogus_update.html", form=form, zmogus=zmogus)
+
+
+@app.route("/bankas_update/<int:id>", methods=['GET', 'POST'])
+def bankas_update(id):
+    form = forms.BankasForm()
+    bankas = Bankas.query.get(id)
+    if form.validate_on_submit():
+        bankas.pavadinimas = form.pavadinimas.data
+        bankas.adresas = form.adresas.data
+        bankas.banko_kodas = form.banko_kodas.data
+        bankas.swift = form.swift.data
+        db.session.commit()
+        return redirect(url_for('people'))
+    return render_template("bankas_update.html", form=form, bankas=bankas)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
